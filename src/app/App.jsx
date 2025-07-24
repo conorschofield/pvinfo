@@ -10,6 +10,7 @@ import Plot from '../components/plot';
 import Header from '../components/header';
 import Help from '../components/help';
 import Services from '../components/services';
+import CaputLog from '../components/pv/caputlogtable/CaputLog';
 import Page404 from '../Page404';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
             <Route path="/ioc" exact={true} element={<IOC />} />
             <Route path="/plot" exact={true} element={<Plot />} />
             <Route path="/services" exact={true} element={<Services />} />
+            <Route path="/caputlog" exact={true} element={<CaputLog />} />
             <Route path="/help" exact={true} element={<Help />} />
             <Route path="/" exact={true} element={<Home handleOpenErrorAlert={setOpenErrorAlert} handleErrorMessage={setErrorMessage} handleSeverity={setSeverity} />} />
           </Routes>

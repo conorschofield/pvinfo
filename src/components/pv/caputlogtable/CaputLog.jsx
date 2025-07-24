@@ -1,28 +1,16 @@
 import React, { useState } from "react";
-import { SearchProvider } from "@elastic/react-search-ui";
-import { Accordion, AccordionDetails, AccordionSummary, Typography, Box, TextField, InputAdornment } from "@mui/material";
-import { ErrorBoundary, Facet, PagingInfo, ResultsPerPage, Paging, useSearch } from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
-import CaputLogDataTable from "./CaputLogDataTable";
+import { SearchProvider, SearchBox, ErrorBoundary, Facet, PagingInfo, ResultsPerPage, Paging, useSearch } from "@elastic/react-search-ui";
+import { Box, TextField, InputAdornment } from "@mui/material";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import moment from "moment";
-import PropTypes from "prop-types";
+import CaputLogDataTable from "./CaputLogDataTable";
 import api from "../../../api";
 
-const propTypes = {
-    pvName: PropTypes.string,
-}
-
-function CaputLogTable(props) {
-
-    const [caputLogExpanded, setCaputLogExpanded] = useState(false);
-    const handleCaputLogExpandedChange = () => (event, isExpanded) => {
-        setCaputLogExpanded(isExpanded);
-    }
+function CaputLog() {
 
     const searchConfig = {
         alwaysSearchOnInitialLoad: true,
@@ -30,14 +18,13 @@ function CaputLogTable(props) {
         hasA11yNotifications: true,
         trackUrlState: false,
         searchQuery: {
-            filters: [{
-                field: "pv.keyword",
-                values: [props.pvName],
-            },],
+            filters: [],
             search_fields: {
                 pv: {
-                    weight: 3
+                    weight: 1
                 },
+                user: {},
+                client: {}
             },
             result_fields: {
                 old: { raw: {} },
@@ -52,6 +39,7 @@ function CaputLogTable(props) {
                 id: { raw: {} }
             },
             facets: {
+                "pv.keyword": { type: "value", size: 30, sort: "count" },
                 "user.keyword": { type: "value", size: 30, sort: "count" },
                 "client.keyword": { type: "value", size: 30, sort: "count" },
             }
@@ -75,7 +63,7 @@ function CaputLogTable(props) {
             setEndDate(adjustedEndDate);
 
             if (!adjustedStartDate || !adjustedEndDate) {
-                clearFilters(["@timestamp"]);
+                clearFilters("@timestamp");
             } else {
                 setFilter("@timestamp", {
                     name: "@timestamp",
@@ -95,6 +83,9 @@ function CaputLogTable(props) {
                                 display: "flex",
                                 flexDirection: "column",
                             }} >
+                                <SearchBox
+                                    inputProps={{ placeholder: "Search by PV Name, User, or Client" }}
+                                />
                                 <DatePicker
                                     selected={startDate}
                                     onChange={onDateChange}
@@ -133,6 +124,12 @@ function CaputLogTable(props) {
                             <div>
                                 {wasSearched}
                                 <Facet
+                                    field="pv.keyword"
+                                    label="PV Name"
+                                    filterType="any"
+                                    isFilterable={false}
+                                />
+                                <Facet
                                     field="user.keyword"
                                     label="User"
                                     filterType="any"
@@ -164,18 +161,10 @@ function CaputLogTable(props) {
     };
 
     return (
-        <Accordion expanded={caputLogExpanded} onChange={handleCaputLogExpandedChange()}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="caputLog-content" id="caputLog-header">
-                <Typography sx={{ fontSize: 18, fontWeight: "medium" }}>Caput Log Data</Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ p: 0, }}>
-                <SearchProvider config={searchConfig}>
-                    <ElasticsearchProvider />
-                </SearchProvider>
-            </AccordionDetails>
-        </Accordion>
+        <SearchProvider config={searchConfig}>
+            <ElasticsearchProvider />
+        </SearchProvider>
     );
 }
 
-CaputLogTable.propTypes = propTypes;
-export default CaputLogTable;
+export default CaputLog;
