@@ -37,10 +37,10 @@ function CaputLogTable(props) {
     }
 
     const buildFilter = () => {
-        if (!startDate || !endDate) return [ {
+        if (!startDate || !endDate) return [{
             field: "pv.keyword",
             values: [props.pvName],
-            },];
+        },];
         const filters = [
             {
                 field: "@timestamp",
@@ -48,7 +48,7 @@ function CaputLogTable(props) {
                     from: startDate.toISOString(),
                     to: endDate.toISOString(),
                     name: "Date Range"
-                } ],
+                }],
             },
             {
                 field: "pv.keyword",
@@ -96,36 +96,36 @@ function CaputLogTable(props) {
             </AccordionSummary>
             <AccordionDetails sx={{ p: 0, }}>
                 <Box sx={{
-                        width: "100%",
-                        maxWidth: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                    }} >
-                        <DatePicker
-                            selected={startDate}
-                            onChange={onDateChange}
-                            startDate={startDate}
-                            endDate={endDate}
-                            selectsRange={true}
-                            showPreviousMonths
-                            monthsShown={2}
-                            placeholderText="Date Range for Caput Log Data"
-                            withPortal
-                            customInput={
-                                <TextField
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <CalendarMonthIcon />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    variant="outlined"
-                                    size="small"
-                                    placeholder="Date Range for Caput Log Data"
-                                />
-                            }/>
+                    width: "100%",
+                    maxWidth: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                }} >
+                    <DatePicker
+                        selected={startDate}
+                        onChange={onDateChange}
+                        startDate={startDate}
+                        endDate={endDate}
+                        selectsRange={true}
+                        showPreviousMonths
+                        monthsShown={2}
+                        placeholderText="Date Range for Caput Log Data"
+                        withPortal
+                        customInput={
+                            <TextField
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <CalendarMonthIcon />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                variant="outlined"
+                                size="small"
+                                placeholder="Date Range for Caput Log Data"
+                            />
+                        } />
                     <SearchProvider config={searchConfig}>
                         <ElasticsearchProvider />
                     </SearchProvider>
