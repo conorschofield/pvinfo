@@ -11,35 +11,6 @@ import CaputLogDataTable from "./CaputLogDataTable";
 import api from "../../../api";
 
 function CaputLog(props) {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const onDateChange = (dates) => {
-        const [start, end] = dates;
-
-        // Set startDate to the beginning of the day
-        const adjustedStartDate = start ? moment(start).startOf("day").toDate() : null;
-
-        // Set endDate to the end of the day
-        const adjustedEndDate = end ? moment(end).endOf("day").toDate() : null;
-
-        setStartDate(adjustedStartDate);
-        setEndDate(adjustedEndDate);
-    };
-
-    const buildFilter = () => {
-        if (!startDate || !endDate) return [];
-        const filters = [
-            {
-                field: "@timestamp",
-                values: [{
-                    from: startDate.toISOString(),
-                    to: endDate.toISOString(),
-                    name: "Date Range"
-                }],
-            },
-        ];
-        return filters;
-    };
 
     const searchConfig = {
         alwaysSearchOnInitialLoad: true,
@@ -47,7 +18,7 @@ function CaputLog(props) {
         hasA11yNotifications: true,
         trackUrlState: false,
         searchQuery: {
-            filters: buildFilter(),
+            filters: [],
             search_fields: {
                 pv: {
                     weight: 1
@@ -75,8 +46,33 @@ function CaputLog(props) {
         },
     };
 
-    const ElasticsearchProviderTest = () => {
-        const { wasSearched, results } = useSearch();
+    const ElasticsearchProvider = () => {
+        const [startDate, setStartDate] = useState(null);
+        const [endDate, setEndDate] = useState(null);
+        const { wasSearched, setFilter, results } = useSearch();
+        const onDateChange = (dates) => {
+            const [start, end] = dates;
+
+            // Set startDate to the beginning of the day
+            const adjustedStartDate = start ? moment(start).startOf("day").toDate() : null;
+
+            // Set endDate to the end of the day
+            const adjustedEndDate = end ? moment(end).endOf("day").toDate() : null;
+
+            setStartDate(adjustedStartDate);
+            setEndDate(adjustedEndDate);
+
+            if (!adjustedStartDate || !adjustedEndDate) {
+                clearFilters("@timestamp");
+            } else {
+                //clearFilters();
+                setFilter("@timestamp", {
+                    name: "@timestamp",
+                    from: adjustedStartDate.toISOString(),
+                    to: adjustedEndDate.toISOString(),
+                });
+            }
+        };
         return (
             <div>
                 <ErrorBoundary>
@@ -176,7 +172,7 @@ function CaputLog(props) {
 
     return (
         <SearchProvider config={searchConfig}>
-            <ElasticsearchProviderTest />
+            <ElasticsearchProvider />
         </SearchProvider>
     );
 }
