@@ -3,11 +3,10 @@ import { SearchProvider } from "@elastic/react-search-ui";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PropTypes from "prop-types";
-import { getCaputLogSearchConfig } from "./caputlogSearchConfig";
-import CaputLogDataTable from "./CaputLogDataTable";
-import CaputLogSearchLayout from "./CaputLogSearchLayout";
+import { getCaputLogSearchConfig } from "../../caputlog/caputlogSearchConfig";
+import CaputLogDataTable from "../../caputlog/CaputLogDataTable";
+import CaputLogSearchLayout from "../../caputlog/CaputLogSearchLayout";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-
 
 const propTypes = {
     pvName: PropTypes.string,

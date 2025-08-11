@@ -1,4 +1,4 @@
-import api from "../../../api";
+import api from "../../api";
 
 export function getCaputLogSearchConfig({ filters = [], search_fields = {}, facets = {}, initialState = {} } = {}) {
   return {
