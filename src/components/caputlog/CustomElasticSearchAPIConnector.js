@@ -9,28 +9,20 @@ export default function CustomElasticSearchAPIConnector(config) {
             const fields = queryConfig?.search_fields
                 ? Object.keys(queryConfig.search_fields).filter(f => f !== "@timestamp")
                 : [];
+            const keywordFields = fields.map(f => `${f}.keyword`);
 
             // Build the main query
-            let mainQuery;
-            if (searchTerm.endsWith('.*')) {
-                const prefix = searchTerm.slice(0, -2);
-                mainQuery = {
-                    multi_match: {
-                        query: prefix,
-                        type: "phrase_prefix",
-                        fields: fields
-                    }
-                };
-            } else {
-                mainQuery = {
-                    multi_match: {
-                        query: searchTerm,
-                        type: "best_fields",
-                        fields: fields.length > 0 ? fields : ["*"]
-                    }
-                };
-            }
-
+            let mainQuery = {
+                bool: {
+                    should: keywordFields.map(field => ({
+                        wildcard: {
+                            [field]: {
+                                value: searchTerm,
+                            }
+                        }
+                    }))
+                }
+            };
             // Build filters if present
             let filter = [];
             if (state.filters && state.filters.length > 0) {
@@ -53,7 +45,6 @@ export default function CustomElasticSearchAPIConnector(config) {
                             }
                         };
                     }
-                    // Other filter types can be added here
                     return {
                         terms: {
                             [f.field]: f.values
